@@ -55,7 +55,11 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
                     ContractSql.Patrimonio.COLUMNA_DATOSHISTORICOS + " TEXT," +
                     ContractSql.Patrimonio.COLUMNA_CODTIPO + " INTEGER," +
                     ContractSql.Patrimonio.COLUMNA_CODMUNICIPIO + " INTEGER," +
-                    ContractSql.Patrimonio.COLUMNA_CODPADRE + " INTEGER)";
+                    ContractSql.Patrimonio.COLUMNA_CODPADRE + " INTEGER," +
+                    "FOREIGN KEY("+ContractSql.Patrimonio.COLUMNA_CODTIPO+") REFERENCES "+ContractSql.Tipo.TABLA+"("+ContractSql.Tipo._ID+")," +
+                    "FOREIGN KEY("+ContractSql.Patrimonio.COLUMNA_CODMUNICIPIO+") REFERENCES "+ContractSql.Municipio.TABLA+"("+ContractSql.Municipio._ID+")," +
+                    "FOREIGN KEY("+ContractSql.Patrimonio.COLUMNA_CODPADRE+") REFERENCES "+ContractSql.Patrimonio.TABLA+"("+ContractSql.Patrimonio._ID+")" +
+                    ")";
 
     private static final String SQL_DELETE_PATRIMONIO =
             "DROP TABLE IF EXISTS " + ContractSql.Patrimonio.TABLA;
@@ -68,7 +72,13 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
                     ContractSql.TipologiaPatrimonio.COLUMNA_CRONOLOGIA + " TEXT," +
                     ContractSql.TipologiaPatrimonio.COLUMNA_CODPATRIMONIO + " TEXT," +
                     ContractSql.TipologiaPatrimonio.COLUMNA_CODPERIODOHISTORICO + " INTEGER," +
-                    ContractSql.TipologiaPatrimonio.COLUMNA_CODACTIVIDAD + " INTEGER)";
+                    ContractSql.TipologiaPatrimonio.COLUMNA_CODACTIVIDAD + " INTEGER,"+
+                    "FOREIGN KEY("+ContractSql.TipologiaPatrimonio.COLUMNA_CODPATRIMONIO+") REFERENCES "+ContractSql.Patrimonio.TABLA+"("+ContractSql.Patrimonio._ID+")," +
+                    "FOREIGN KEY("+ContractSql.TipologiaPatrimonio.COLUMNA_CODPERIODOHISTORICO+") REFERENCES "+ContractSql.PeriodoHistorico.TABLA+"("+ContractSql.PeriodoHistorico._ID+")," +
+                    "FOREIGN KEY("+ContractSql.TipologiaPatrimonio.COLUMNA_CODACTIVIDAD+") REFERENCES "+ContractSql.Actividad.TABLA+"("+ContractSql.Actividad._ID+")" +
+                    ")";
+
+            ;
 
     private static final String SQL_DELETE_TIPOLOGIA_PATRIMONIO =
             "DROP TABLE IF EXISTS " + ContractSql.Patrimonio.TABLA;
@@ -91,12 +101,12 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_TIPOLOGIA_PATRIMONIO);
+        db.execSQL(SQL_DELETE_PATRIMONIO);
         db.execSQL(SQL_DELETE_ACTIVIDAD);
         db.execSQL(SQL_DELETE_PERIODO_HISTORICO);
         db.execSQL(SQL_DELETE_TIPO);
         db.execSQL(SQL_DELETE_MUNICIPIO);
-        db.execSQL(SQL_DELETE_PATRIMONIO);
-        db.execSQL(SQL_DELETE_TIPOLOGIA_PATRIMONIO);
         onCreate(db);
     }
 
