@@ -1,5 +1,6 @@
 package es.jlmartin.romane.sql;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -98,6 +99,14 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_PATRIMONIO);
         db.execSQL(SQL_CREATE_TIPOLOGIA_PATRIMONIO);
 
+        //datos
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        //values.put(ContractSql.Actividad._ID, 1);
+        values.put(ContractSql.Actividad.COLUMNA_DESCRIPCION, "Actividad");
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId = db.insert(ContractSql.Actividad.TABLA, null, values);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
