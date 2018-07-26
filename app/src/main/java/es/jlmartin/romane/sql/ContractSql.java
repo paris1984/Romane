@@ -25,6 +25,7 @@ public class ContractSql {
     public static class Municipio implements BaseColumns {
         public static final String TABLA = "municipio";
         public static final String COLUMNA_NOMBRE = "nombre";
+        public static final String COLUMNA_PROVINCIA_ID = "cod_provincia";
         public static final String COLUMNA_LATITUD = "latitud";
         public static final String COLUMNA_LONGITUD = "longitud";
     }

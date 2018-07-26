@@ -39,6 +39,7 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + ContractSql.Municipio.TABLA + " (" +
                     ContractSql.Municipio._ID + " INTEGER PRIMARY KEY," +
                     ContractSql.Municipio.COLUMNA_NOMBRE + " TEXT," +
+                    ContractSql.Municipio.COLUMNA_PROVINCIA_ID + " INTEGER," +
                     ContractSql.Municipio.COLUMNA_LATITUD + " REAL," +
                     ContractSql.Municipio.COLUMNA_LONGITUD + " REAL)";
 
