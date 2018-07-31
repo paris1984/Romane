@@ -2,8 +2,14 @@ package es.jlmartin.romane.sql;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.List;
+
+import es.jlmartin.romane.R;
+import es.jlmartin.romane.sql.entity.Municipio;
 
 public class RomaneDbHelper extends SQLiteOpenHelper {
 
@@ -100,7 +106,21 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_PATRIMONIO);
         db.execSQL(SQL_CREATE_TIPOLOGIA_PATRIMONIO);
 
-        //datos
+        //datos municipios
+        List<Municipio> municipios = MunicipiosSqlCreateDbHelper.creation(Resources.getSystem().openRawResource(R.raw.datas_municipios));
+        int count=0;
+        for (Municipio municipio:municipios) {
+            ContentValues values = new ContentValues();
+            values.put(ContractSql.Municipio.COLUMNA_NOMBRE,municipio.getNombre());
+            values.put(ContractSql.Municipio.COLUMNA_PROVINCIA_ID,municipio.getProvincia_id());
+            values.put(ContractSql.Municipio.COLUMNA_LATITUD,municipio.getLatitud());
+            values.put(ContractSql.Municipio.COLUMNA_LONGITUD,municipio.getLongitud());
+            if(db.insert(ContractSql.Municipio.TABLA, null, values)!=-1){
+                count++;
+            }else{
+                System.err.println("Error al insertar:"+municipio);
+            }
+        }
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         //values.put(ContractSql.Actividad._ID, 1);
