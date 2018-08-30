@@ -1,11 +1,10 @@
 package es.jlmartin.romane;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RomaneDbHelper helper = new RomaneDbHelper(this);
+        RomaneDbHelper helper = new RomaneDbHelper(this,null);
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database

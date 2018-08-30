@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ import es.jlmartin.romane.sql.entity.Municipio;
 
 public class RomaneDbHelper extends SQLiteOpenHelper {
 
+    private ProgressBar progressBar;
     //ACTIVIDAD
     private static final String SQL_CREATE_ACTIVIDAD =
             "CREATE TABLE " + ContractSql.Actividad.TABLA + " (" +
@@ -91,14 +94,24 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_TIPOLOGIA_PATRIMONIO =
             "DROP TABLE IF EXISTS " + ContractSql.Patrimonio.TABLA;
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "Romane.db";
 
-    public RomaneDbHelper(Context context) {
+    public RomaneDbHelper(Context context, ProgressBar progressBar) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.progressBar = progressBar;
     }
 
+    private Handler handler = new Handler();
     public void onCreate(SQLiteDatabase db) {
+
+        handler.post(new Runnable() {
+            public void run() {
+                progressBar.setProgress(10);
+            }
+        });
+
+
         db.execSQL(SQL_CREATE_ACTIVIDAD);
         db.execSQL(SQL_CREATE_PERIODO_HISTORICO);
         db.execSQL(SQL_CREATE_TIPO);
@@ -107,8 +120,19 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TIPOLOGIA_PATRIMONIO);
 
         //datos municipios
-        List<Municipio> municipios = MunicipiosSqlCreateDbHelper.creation(Resources.getSystem().openRawResource(R.raw.datas_municipios));
+        MunicipiosSqlCreateDbHelper helper = new MunicipiosSqlCreateDbHelper(Resources.getSystem().openRawResource(R.raw.datas_municipios));
+        Thread hilo = new Thread(helper);
+        hilo.start();
+        while(hilo.getState().equals(Thread.State.RUNNABLE)){
+            System.out.println("ejecutando");
+        }
+        List<Municipio> municipios = helper.getMunicipios();
         int count=0;
+        handler.post(new Runnable() {
+            public void run() {
+                progressBar.setProgress(50);
+            }
+        });
         for (Municipio municipio:municipios) {
             ContentValues values = new ContentValues();
             values.put(ContractSql.Municipio.COLUMNA_NOMBRE,municipio.getNombre());
@@ -121,6 +145,11 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
                 System.err.println("Error al insertar:"+municipio);
             }
         }
+        handler.post(new Runnable() {
+            public void run() {
+                progressBar.setProgress(100);
+            }
+        });
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         //values.put(ContractSql.Actividad._ID, 1);

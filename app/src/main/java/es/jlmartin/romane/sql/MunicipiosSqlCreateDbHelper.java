@@ -10,11 +10,19 @@ import java.util.List;
 
 import es.jlmartin.romane.sql.entity.Municipio;
 
-public class MunicipiosSqlCreateDbHelper {
+public class MunicipiosSqlCreateDbHelper implements Runnable {
 
-    public static List<Municipio> creation(InputStream inputStream) {
+    private List<Municipio> municipios = new ArrayList<>();
+    private boolean finalizado = false;
+    private InputStream inputStream;
 
-        List<Municipio> municipios = new ArrayList<>();
+    public MunicipiosSqlCreateDbHelper(final InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
+    private void creation(InputStream inputStream) {
+
+
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String linea;
@@ -29,13 +37,24 @@ public class MunicipiosSqlCreateDbHelper {
                 Municipio municipio = new Municipio(nombre,provincia_id,latitud,longitud);
                 municipios.add(municipio);
             }
+            finalizado  = true;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  municipios;
+    }
 
+    @Override
+    public void run() {
+        creation(this.inputStream);
+    }
 
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+    public boolean isFinalizado() {
+        return finalizado;
     }
 }
