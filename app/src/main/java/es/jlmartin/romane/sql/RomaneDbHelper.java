@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.InputStream;
 import java.util.List;
 
 import es.jlmartin.romane.R;
@@ -94,8 +95,11 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Romane.db";
 
+    private final InputStream inputStream;
     public RomaneDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        inputStream = context.getResources().openRawResource(R.raw.datas_municipios);
+
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -107,7 +111,7 @@ public class RomaneDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TIPOLOGIA_PATRIMONIO);
 
         //datos municipios
-        List<Municipio> municipios = MunicipiosSqlCreateDbHelper.creation(Resources.getSystem().openRawResource(R.raw.datas_municipios));
+        List<Municipio> municipios = MunicipiosSqlCreateDbHelper.creation(inputStream);
         int count=0;
         for (Municipio municipio:municipios) {
             ContentValues values = new ContentValues();
